@@ -6,4 +6,22 @@ cd ~/esp/hello_world
 idf.py set-target esp32
 idf.py menuconfig
 
-ESP32-D0WD-V3
+###FLASH###
+idf.py -p /dev/ttyUSB0 flash monitor
+
+###ESP-D0WD-V3 Schematic###
+https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32/schematic-checklist.html#fig-chip-core-schematic
+
+###ESP-S3 Schematic###
+
+https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32s3/schematic-checklist.html
+
+###OPENOCD Debug###
+
+xtensa-esp32-elf-gdb -x gdbinit main.elf
+esptool --chip esp32 elf2image --flash_mode="dio" --flash_freq "40m" --flash_size "4MB" -o main.bin main.elf
+esptool --chip esp32 --port /dev/ttyUSB0 --baud 115200 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 main.bin
+
+xtensa-esp32-elf-gdb -x gdbinit build/bootloader/bootloader.elf
+bin/openocd -s share/openocd/scripts -f interface/ftdi/esp32_devkitj_v1.cfg -f board/esp-wroom-32.cfg
+openocd -f esp32_devkitj_v1.cfg -f esp-wroom-32.cfg
