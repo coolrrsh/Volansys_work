@@ -1,0 +1,9 @@
+. $HOME/esp/esp-idf/export.sh
+cd ~/esp
+cp -r $IDF_PATH/examples/get-started/hello_world .
+
+cd ~/esp/hello_world
+idf.py set-target esp32
+idf.py menuconfig
+
+ESP32-D0WD-V3

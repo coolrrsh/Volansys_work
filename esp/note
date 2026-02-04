@@ -25,3 +25,7 @@ esptool --chip esp32 --port /dev/ttyUSB0 --baud 115200 --before default_reset --
 xtensa-esp32-elf-gdb -x gdbinit build/bootloader/bootloader.elf
 bin/openocd -s share/openocd/scripts -f interface/ftdi/esp32_devkitj_v1.cfg -f board/esp-wroom-32.cfg
 openocd -f esp32_devkitj_v1.cfg -f esp-wroom-32.cfg
+
+
+xtensa-esp-elf-objcopy -I binary -O elf32-xtensa-le -B xtensa images.png image.o
+

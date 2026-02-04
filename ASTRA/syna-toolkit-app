@@ -1,0 +1,39 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install core tools and graphics libraries for WSLg/GUI support
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg2 \
+    software-properties-common \
+    libvulkan1 \
+    libvulkan1:i386 \
+    libgl1-mesa-dri:i386 \
+    libgl1-mesa-glx:i386 \
+    mesa-vulkan-drivers \
+    mesa-vulkan-drivers:i386 \
+    && dpkg --add-architecture i386 \
+    && apt-get update
+
+# Add WineHQ Repository
+RUN mkdir -pm755 /etc/apt/keyrings && \
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+
+# Install Wine Stable
+RUN apt-get update && apt-get install -y --install-recommends winehq-stable && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set up working directory
+WORKDIR /app
+
+# Copy your specific .exe into the image
+COPY SynaToolkit_2.6.0.exe /app/SynaToolkit_2.6.0.exe
+
+# Set environment variables for Wine and GUI
+ENV WINEDEBUG=-all
+ENV WINEPREFIX=/root/.wine
+
+# Instead of CMD, we use an entrypoint to run wine
+ENTRYPOINT ["wine", "SynaToolkit_2.6.0.exe"]
